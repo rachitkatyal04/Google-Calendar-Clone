@@ -45,7 +45,7 @@ function isSameDay(a, b) {
 
 const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
-export default function Sidebar({ currentDate, setCurrentDate }) {
+export default function Sidebar({ currentDate, setCurrentDate, showHolidays = true, onToggleHolidays }) {
   const monthStart = useMemo(() => startOfMonth(currentDate), [currentDate]);
   const monthEnd = useMemo(() => endOfMonth(currentDate), [currentDate]);
   const gridStart = useMemo(() => startOfWeekSunday(monthStart), [monthStart]);
@@ -102,11 +102,45 @@ export default function Sidebar({ currentDate, setCurrentDate }) {
           ))}
         </div>
       </div>
+      <div className="search-people">
+        <input className="search-input" placeholder="Search for people" />
+      </div>
+      <div className="sidebar-row">
+        <div className="row-title">Booking pages</div>
+        <button className="icon-btn small" aria-label="Add booking page">+</button>
+      </div>
       <div className="sidebar-section">
-        <div className="section-title">My calendars</div>
-        <div className="calendar-chip">
-          <span className="dot" style={{ background: "#1a73e8" }} />
-          <span>Primary</span>
+        <div className="section-header">
+          <div className="section-title">My calendars</div>
+        </div>
+        <div className="calendar-list">
+          <label className="cal-item" style={{ "--accent": "#1a73e8" }}>
+            <input type="checkbox" defaultChecked />
+            <span className="color-square" />
+            <span>Primary</span>
+          </label>
+          <label className="cal-item" style={{ "--accent": "#34a853" }}>
+            <input type="checkbox" defaultChecked />
+            <span className="color-square" />
+            <span>Birthdays</span>
+          </label>
+          <label className="cal-item" style={{ "--accent": "#4285f4" }}>
+            <input type="checkbox" defaultChecked />
+            <span className="color-square" />
+            <span>Tasks</span>
+          </label>
+        </div>
+      </div>
+      <div className="sidebar-section">
+        <div className="section-header">
+          <div className="section-title">Other calendars</div>
+        </div>
+        <div className="calendar-list">
+          <label className="cal-item" style={{ "--accent": "#0f9d58" }}>
+            <input type="checkbox" checked={!!showHolidays} onChange={() => onToggleHolidays && onToggleHolidays()} />
+            <span className="color-square" />
+            <span>Holidays in India</span>
+          </label>
         </div>
       </div>
     </aside>

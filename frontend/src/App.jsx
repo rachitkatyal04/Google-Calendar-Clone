@@ -7,6 +7,7 @@ import {
   createEvent,
   deleteEvent,
   getEvents,
+  getHolidays,
   updateEvent,
 } from "./api/client.js";
 
@@ -20,6 +21,8 @@ export default function App() {
   const [rangeStart, setRangeStart] = useState(null);
   const [rangeEnd, setRangeEnd] = useState(null);
   const [events, setEvents] = useState([]);
+  const [holidayEvents, setHolidayEvents] = useState([]);
+  const [showHolidays, setShowHolidays] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -36,6 +39,24 @@ export default function App() {
       setEvents(data);
     })();
   }, [canQuery, rangeStart, rangeEnd]);
+
+  // Load public holidays for the visible range (supports year boundaries)
+  useEffect(() => {
+    if (!canQuery || !showHolidays) { setHolidayEvents([]); return; }
+    (async () => {
+      const start = new Date(rangeStart);
+      const end = new Date(rangeEnd);
+      const years = new Set([start.getFullYear(), end.getFullYear()]);
+      const country = "IN"; // default; can be made configurable
+      const results = await Promise.all(
+        Array.from(years).map((y) => getHolidays(country, y))
+      );
+      const all = results.flat();
+      // filter to range
+      const filtered = all.filter((e) => new Date(e.start) <= end && new Date(e.end) >= start);
+      setHolidayEvents(filtered);
+    })();
+  }, [canQuery, rangeStart, rangeEnd, showHolidays]);
 
   function handlePrev() {
     const d = new Date(currentDate);
@@ -118,6 +139,8 @@ export default function App() {
     return null;
   }, [selectedDate, selectedEvent]);
 
+  const displayEvents = useMemo(() => (showHolidays ? [...events, ...holidayEvents] : events), [events, holidayEvents, showHolidays]);
+
   return (
     <div className="app-container">
       <header className="app-header">
@@ -138,12 +161,17 @@ export default function App() {
       </header>
 
       <main className="app-main with-sidebar">
-        <Sidebar currentDate={currentDate} setCurrentDate={setCurrentDate} />
+        <Sidebar
+          currentDate={currentDate}
+          setCurrentDate={setCurrentDate}
+          showHolidays={showHolidays}
+          onToggleHolidays={() => setShowHolidays((v) => !v)}
+        />
         <div className="main-pane">
           {view === "month" ? (
             <CalendarGrid
               currentDate={currentDate}
-              events={events}
+              events={displayEvents}
               onDayClick={handleDayClick}
               onEventClick={handleEventClick}
               onRangeChange={handleRangeChange}
@@ -151,7 +179,7 @@ export default function App() {
           ) : (
             <WeekGrid
               currentDate={currentDate}
-              events={events}
+              events={displayEvents}
               onDayClick={handleDayClick}
               onEventClick={handleEventClick}
               onRangeChange={handleRangeChange}

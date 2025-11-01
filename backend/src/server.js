@@ -20,6 +20,7 @@ app.get("/api/health", (req, res) => {
 
 // Routes
 app.use("/api/events", require("./routes/events"));
+app.use("/api/holidays", require("./routes/holidays"));
 
 // Error handlers (after routes)
 const { notFound, errorHandler } = require("./middleware/errorHandler");
