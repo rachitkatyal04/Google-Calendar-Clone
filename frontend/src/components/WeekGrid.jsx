@@ -65,6 +65,18 @@ export default function WeekGrid({ currentDate, events, onDayClick, onEventClick
     return { top: minutesFromStart * pxPerMinute, height: heightMin * pxPerMinute };
   }
 
+  function handleTimeGridClick(e, day) {
+    if (!onDayClick) return;
+    const col = e.currentTarget;
+    const rect = col.getBoundingClientRect();
+    const y = e.clientY - rect.top; // px from top
+    const minutes = Math.max(0, Math.min(1439, Math.round((y / rect.height) * 1440)));
+    const d = new Date(day);
+    d.setHours(0, 0, 0, 0);
+    d.setMinutes(minutes);
+    onDayClick(d);
+  }
+
   return (
     <div className="week">
       <div className="week-header">
@@ -106,7 +118,7 @@ export default function WeekGrid({ currentDate, events, onDayClick, onEventClick
         </div>
         <div className="days-grid">
           {days.map((d) => (
-            <div key={d.toISOString()} className="day-col" onClick={() => onDayClick && onDayClick(d)}>
+            <div key={d.toISOString()} className="day-col" onClick={(e) => handleTimeGridClick(e, d)}>
               <div className="hour-lines">
                 {hourLabels.map((h) => (
                   <div key={h} className="hour-line" />

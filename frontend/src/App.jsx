@@ -166,6 +166,12 @@ export default function App() {
           setCurrentDate={setCurrentDate}
           showHolidays={showHolidays}
           onToggleHolidays={() => setShowHolidays((v) => !v)}
+          onCreate={() => {
+            const now = new Date();
+            setSelectedDate(now);
+            setSelectedEvent(null);
+            setIsModalOpen(true);
+          }}
         />
         <div className="main-pane">
           {view === "month" ? (

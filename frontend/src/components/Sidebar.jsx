@@ -45,7 +45,7 @@ function isSameDay(a, b) {
 
 const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
-export default function Sidebar({ currentDate, setCurrentDate, showHolidays = true, onToggleHolidays }) {
+export default function Sidebar({ currentDate, setCurrentDate, showHolidays = true, onToggleHolidays, onCreate }) {
   const monthStart = useMemo(() => startOfMonth(currentDate), [currentDate]);
   const monthEnd = useMemo(() => endOfMonth(currentDate), [currentDate]);
   const gridStart = useMemo(() => startOfWeekSunday(monthStart), [monthStart]);
@@ -75,7 +75,7 @@ export default function Sidebar({ currentDate, setCurrentDate, showHolidays = tr
   return (
     <aside className="sidebar">
       <div className="create-row">
-        <button className="btn primary">+ Create</button>
+        <button className="btn primary" onClick={() => onCreate && onCreate()}>+ Create</button>
       </div>
       <div className="mini-cal">
         <div className="mini-cal-header">
