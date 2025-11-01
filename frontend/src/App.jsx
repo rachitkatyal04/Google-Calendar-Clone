@@ -18,6 +18,13 @@ function formatMonthYear(date) {
 export default function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState("week");
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("theme") || "light";
+    } catch {
+      return "light";
+    }
+  });
   const [rangeStart, setRangeStart] = useState(null);
   const [rangeEnd, setRangeEnd] = useState(null);
   const [events, setEvents] = useState([]);
@@ -90,6 +97,13 @@ export default function App() {
     setIsModalOpen(true);
   }
 
+  function handleCreateFromSidebar() {
+    // Open create modal defaulting to 'now'
+    setSelectedEvent(null);
+    setSelectedDate(new Date());
+    setIsModalOpen(true);
+  }
+
   function handleRangeChange(startISO, endISO) {
     setRangeStart(startISO);
     setRangeEnd(endISO);
@@ -141,8 +155,12 @@ export default function App() {
 
   const displayEvents = useMemo(() => (showHolidays ? [...events, ...holidayEvents] : events), [events, holidayEvents, showHolidays]);
 
+  useEffect(() => {
+    try { localStorage.setItem("theme", theme); } catch {}
+  }, [theme]);
+
   return (
-    <div className="app-container">
+    <div className={`app-container ${theme === "dark" ? "dark" : ""}`}>
       <header className="app-header">
         <div className="brand">Calendar</div>
         <div className="controls">
@@ -157,6 +175,16 @@ export default function App() {
             <button className={`btn${view === "week" ? " primary" : ""}`} onClick={() => handleViewChange("week")}>Week</button>
             <button className={`btn${view === "month" ? " primary" : ""}`} onClick={() => handleViewChange("month")}>Month</button>
           </div>
+          <div className="theme-toggle">
+            <button
+              className="icon-btn"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label="Toggle theme"
+              title={theme === "dark" ? "Switch to light" : "Switch to dark"}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -166,12 +194,7 @@ export default function App() {
           setCurrentDate={setCurrentDate}
           showHolidays={showHolidays}
           onToggleHolidays={() => setShowHolidays((v) => !v)}
-          onCreate={() => {
-            const now = new Date();
-            setSelectedDate(now);
-            setSelectedEvent(null);
-            setIsModalOpen(true);
-          }}
+          onCreate={handleCreateFromSidebar}
         />
         <div className="main-pane">
           {view === "month" ? (

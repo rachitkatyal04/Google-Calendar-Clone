@@ -48,6 +48,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
 }
 .nav {
   display: flex;
@@ -57,6 +58,47 @@ body {
   font-weight: 600;
   margin-left: 8px;
 }
+
+.view-switcher { display: flex; gap: 12px; }
+.theme-toggle { margin-left: 8px; }
+
+/* Dark theme */
+.app-container.dark {
+  --bg: #202124;
+  --pane: #1a1c1e;
+  --text: #e8eaed;
+  --muted: #9aa0a6;
+  --border: #3c4043;
+  --primary: #8ab4f8;
+  --today: #2a2b2f;
+}
+.app-container.dark .app-header { background: var(--bg); }
+.app-container.dark .icon-btn,
+.app-container.dark .btn { background: #2b2c2f; color: var(--text); border-color: var(--border); }
+.app-container.dark .btn.primary { background: var(--primary); border-color: var(--primary); color: #0b1222; }
+.app-container.dark .calendar-weekdays { background: #222326; }
+.app-container.dark .day-cell { background: #1f2023; }
+.app-container.dark .day-cell:hover { background: #25262a; }
+.app-container.dark .day-cell.outside { background: #17181a; color: var(--muted); }
+.app-container.dark .event-pill, .app-container.dark .event-all-day, .app-container.dark .event-block { color: #fff; }
+.app-container.dark .sidebar { background: var(--pane); }
+/* Improve dark text contrast */
+.app-container.dark .title,
+.app-container.dark .brand { color: var(--text); }
+.app-container.dark .day-number { color: var(--text); }
+.app-container.dark .day-cell.outside .day-number { color: var(--muted); }
+.app-container.dark .day-header .day-date { color: var(--text); }
+.app-container.dark .time-label { color: #cfd3d7; }
+.app-container.dark .mini-day { color: var(--text); }
+.app-container.dark .mini-day.outside { color: var(--muted); }
+/* Sidebar dark readability */
+.app-container.dark .mini-cal-title { color: var(--text); }
+.app-container.dark .mini-weekdays { color: #cfd3d7; }
+.app-container.dark .search-input { background: #2b2c2f; color: var(--text); border-color: var(--border); }
+.app-container.dark .search-input::placeholder { color: #cfd3d7; opacity: 1; }
+.app-container.dark .sidebar-row .row-title { color: var(--text); }
+.app-container.dark .section-title { color: var(--text); }
+.app-container.dark .cal-item { color: var(--text); }
 
 .btn {
   padding: 6px 10px;
