@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CalendarGrid from "./components/CalendarGrid.jsx";
+import WeekGrid from "./components/WeekGrid.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 import EventModal from "./components/EventModal.jsx";
 import {
   createEvent,
@@ -14,6 +16,7 @@ function formatMonthYear(date) {
 
 export default function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState("week");
   const [rangeStart, setRangeStart] = useState(null);
   const [rangeEnd, setRangeEnd] = useState(null);
   const [events, setEvents] = useState([]);
@@ -48,6 +51,10 @@ export default function App() {
 
   function handleToday() {
     setCurrentDate(new Date());
+  }
+
+  function handleViewChange(next) {
+    setView(next);
   }
 
   function handleDayClick(day) {
@@ -116,37 +123,41 @@ export default function App() {
       <header className="app-header">
         <div className="brand">Calendar</div>
         <div className="controls">
-          <button onClick={handleToday} className="btn">
-            Today
-          </button>
+          <button onClick={handleToday} className="btn">Today</button>
           <div className="nav">
-            <button
-              onClick={handlePrev}
-              className="icon-btn"
-              aria-label="Previous Month"
-            >
-              ◀
-            </button>
-            <button
-              onClick={handleNext}
-              className="icon-btn"
-              aria-label="Next Month"
-            >
-              ▶
-            </button>
+            <button onClick={handlePrev} className="icon-btn" aria-label="Previous">◀</button>
+            <button onClick={handleNext} className="icon-btn" aria-label="Next">▶</button>
           </div>
           <div className="title">{formatMonthYear(currentDate)}</div>
+          <div className="spacer" />
+          <div className="view-switcher">
+            <button className={`btn${view === "week" ? " primary" : ""}`} onClick={() => handleViewChange("week")}>Week</button>
+            <button className={`btn${view === "month" ? " primary" : ""}`} onClick={() => handleViewChange("month")}>Month</button>
+          </div>
         </div>
       </header>
 
-      <main className="app-main">
-        <CalendarGrid
-          currentDate={currentDate}
-          events={events}
-          onDayClick={handleDayClick}
-          onEventClick={handleEventClick}
-          onRangeChange={handleRangeChange}
-        />
+      <main className="app-main with-sidebar">
+        <Sidebar currentDate={currentDate} setCurrentDate={setCurrentDate} />
+        <div className="main-pane">
+          {view === "month" ? (
+            <CalendarGrid
+              currentDate={currentDate}
+              events={events}
+              onDayClick={handleDayClick}
+              onEventClick={handleEventClick}
+              onRangeChange={handleRangeChange}
+            />
+          ) : (
+            <WeekGrid
+              currentDate={currentDate}
+              events={events}
+              onDayClick={handleDayClick}
+              onEventClick={handleEventClick}
+              onRangeChange={handleRangeChange}
+            />
+          )}
+        </div>
       </main>
 
       <EventModal
